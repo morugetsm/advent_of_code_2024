@@ -33,5 +33,5 @@ pub fn part2() {
             acc
         });
 
-    println!("Day3 Part1 result: {}", result.1);
+    println!("Day3 Part2 result: {}", result.1);
 }
