@@ -24,3 +24,12 @@ fn test_cmp() {
         }
     });
 }
+
+#[test]
+fn test_slice() {
+    let foo = [1, 2, 3, 4, 5];
+
+    println!("{:?}", &foo[0..0]);
+    println!("{:?}", &foo[0..1]);
+    println!("{:?}", &foo[5..5]);
+}
