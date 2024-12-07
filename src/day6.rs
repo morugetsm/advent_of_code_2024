@@ -1,5 +1,7 @@
 use std::{collections::HashSet, mem::MaybeUninit, ops::Range};
 
+use advent_of_code_2024::Day;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 enum Direction {
     Up,
@@ -96,79 +98,17 @@ impl From<char> for Area {
     }
 }
 
-pub fn part1() {
-    let input = std::fs::read_to_string("./input/day6").unwrap();
+pub struct Day6;
 
-    let mut map: Vec<Vec<Area>> = input
-        .lines()
-        .map(|line| line.chars().map(Area::from).collect())
-        .collect();
+impl Day for Day6 {
+    fn part1(&self) -> usize {
+        let input = std::fs::read_to_string("./input/day6").unwrap();
 
-    let mut coord = MaybeUninit::uninit();
+        let mut map: Vec<Vec<Area>> = input
+            .lines()
+            .map(|line| line.chars().map(Area::from).collect())
+            .collect();
 
-    for y in 0..map.len() {
-        for x in 0..map[0].len() {
-            if matches!(map[y][x], Area::Guard(_)) {
-                coord.write(Coord {
-                    y_range: 0..map.len(),
-                    y,
-                    x_range: 0..map[0].len(),
-                    x,
-                });
-            }
-        }
-    }
-
-    let mut curr = unsafe { coord.assume_init() };
-
-    'outer: loop {
-        let mut guard = Area::Visited;
-        std::mem::swap(&mut guard, &mut map[curr.y][curr.x]);
-
-        let Area::Guard(ref mut dir) = guard else {
-            panic!()
-        };
-
-        'inner: loop {
-            let Some(next) = curr.forward(*dir) else {
-                break 'outer;
-            };
-            match map[next.y][next.x] {
-                Area::Block => {
-                    dir.rotate();
-                }
-                Area::Empty | Area::Visited => {
-                    std::mem::swap(&mut guard, &mut map[next.y][next.x]);
-                    curr = next;
-                    break 'inner;
-                }
-                _ => unreachable!(),
-            }
-        }
-    }
-
-    let result = map.iter().fold(0, |acc, line| {
-        acc + line.iter().fold(0, |acc, cell| {
-            if matches!(cell, Area::Visited) {
-                acc + 1
-            } else {
-                acc
-            }
-        })
-    });
-
-    println!("Day6 Part1 result: {}", result);
-}
-
-pub fn part2() {
-    let input = std::fs::read_to_string("./input/day6").unwrap();
-
-    let map: Vec<Vec<Area>> = input
-        .lines()
-        .map(|line| line.chars().map(Area::from).collect())
-        .collect();
-
-    fn simulate_loop(mut map: Vec<Vec<Area>>) -> bool {
         let mut coord = MaybeUninit::uninit();
 
         for y in 0..map.len() {
@@ -185,12 +125,11 @@ pub fn part2() {
         }
 
         let mut curr = unsafe { coord.assume_init() };
-        let mut guard = Area::Visited;
-        std::mem::swap(&mut guard, &mut map[curr.y][curr.x]);
-
-        let mut path = HashSet::new();
 
         'outer: loop {
+            let mut guard = Area::Visited;
+            std::mem::swap(&mut guard, &mut map[curr.y][curr.x]);
+
             let Area::Guard(ref mut dir) = guard else {
                 panic!()
             };
@@ -199,14 +138,12 @@ pub fn part2() {
                 let Some(next) = curr.forward(*dir) else {
                     break 'outer;
                 };
-                if !path.insert((next.y, next.x, *dir)) {
-                    return true;
-                }
                 match map[next.y][next.x] {
                     Area::Block => {
                         dir.rotate();
                     }
                     Area::Empty | Area::Visited => {
+                        std::mem::swap(&mut guard, &mut map[next.y][next.x]);
                         curr = next;
                         break 'inner;
                     }
@@ -215,23 +152,92 @@ pub fn part2() {
             }
         }
 
-        false
+        let result = map.iter().fold(0, |acc, line| {
+            acc + line.iter().fold(0, |acc, cell| {
+                if matches!(cell, Area::Visited) {
+                    acc + 1
+                } else {
+                    acc
+                }
+            })
+        });
+
+        result
     }
 
-    let mut result = 0;
-    for y in 0..map.len() {
-        for x in 0..map[0].len() {
-            if !matches!(map[y][x], Area::Empty) {
-                continue;
-            }
-            let mut map = map.clone();
-            map[y][x] = Area::Block;
+    fn part2(&self) -> usize {
+        let input = std::fs::read_to_string("./input/day6").unwrap();
 
-            if simulate_loop(map) {
-                result += 1;
+        let map: Vec<Vec<Area>> = input
+            .lines()
+            .map(|line| line.chars().map(Area::from).collect())
+            .collect();
+
+        fn simulate_loop(mut map: Vec<Vec<Area>>) -> bool {
+            let mut coord = MaybeUninit::uninit();
+
+            for y in 0..map.len() {
+                for x in 0..map[0].len() {
+                    if matches!(map[y][x], Area::Guard(_)) {
+                        coord.write(Coord {
+                            y_range: 0..map.len(),
+                            y,
+                            x_range: 0..map[0].len(),
+                            x,
+                        });
+                    }
+                }
+            }
+
+            let mut curr = unsafe { coord.assume_init() };
+            let mut guard = Area::Visited;
+            std::mem::swap(&mut guard, &mut map[curr.y][curr.x]);
+
+            let mut path = HashSet::new();
+
+            'outer: loop {
+                let Area::Guard(ref mut dir) = guard else {
+                    panic!()
+                };
+
+                'inner: loop {
+                    let Some(next) = curr.forward(*dir) else {
+                        break 'outer;
+                    };
+                    if !path.insert((next.y, next.x, *dir)) {
+                        return true;
+                    }
+                    match map[next.y][next.x] {
+                        Area::Block => {
+                            dir.rotate();
+                        }
+                        Area::Empty | Area::Visited => {
+                            curr = next;
+                            break 'inner;
+                        }
+                        _ => unreachable!(),
+                    }
+                }
+            }
+
+            false
+        }
+
+        let mut result = 0;
+        for y in 0..map.len() {
+            for x in 0..map[0].len() {
+                if !matches!(map[y][x], Area::Empty) {
+                    continue;
+                }
+                let mut map = map.clone();
+                map[y][x] = Area::Block;
+
+                if simulate_loop(map) {
+                    result += 1;
+                }
             }
         }
-    }
 
-    println!("Day6 Part2 result: {}", result);
+        result
+    }
 }

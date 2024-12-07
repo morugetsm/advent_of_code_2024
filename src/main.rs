@@ -1,3 +1,5 @@
+use advent_of_code_2024::Day;
+
 mod day1;
 mod day2;
 mod day3;
@@ -7,24 +9,30 @@ mod day6;
 mod day7;
 
 fn main() {
-    day1::part1();
-    day1::part2();
-    println!();
-    day2::part1();
-    day2::part2();
-    println!();
-    day3::part1();
-    day3::part2();
-    println!();
-    day4::part1();
-    day4::part2();
-    println!();
-    day5::part1();
-    day5::part2();
-    println!();
-    day6::part1();
-    day6::part2(); // heavy
-    println!();
-    day7::part1();
-    day7::part2();
+    let days: &[Box<dyn Day>] = &[
+        Box::new(day1::Day1),
+        Box::new(day2::Day2),
+        Box::new(day3::Day3),
+        Box::new(day4::Day4),
+        Box::new(day5::Day5),
+        Box::new(day6::Day6),
+        Box::new(day7::Day7),
+    ];
+
+    println!("ADVENT OF CODE 2024!");
+
+    for (idx, obj) in days.iter().enumerate() {
+        println!();
+        let day = idx + 1;
+
+        let timer1 = std::time::Instant::now();
+        let result1 = obj.part1();
+        let elapse1 = timer1.elapsed();
+        println!("[Day{} Part1] {:<15} ({}ms)", day, result1, elapse1.as_millis());
+
+        let timer2 = std::time::Instant::now();
+        let result2 = obj.part2();
+        let elapse2 = timer2.elapsed();
+        println!("[Day{} Part2] {:<15} ({}ms)", day, result2, elapse2.as_millis());
+    }
 }
