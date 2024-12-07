@@ -2,6 +2,12 @@ use advent_of_code_2024::Day;
 
 pub struct Day3;
 
+impl std::fmt::Display for Day3 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Day3")
+    }
+}
+
 impl Day for Day3 {
     fn part1(&self) -> usize {
         let input = std::fs::read_to_string("./input/day3").unwrap();

@@ -21,18 +21,17 @@ fn main() {
 
     println!("ADVENT OF CODE 2024!");
 
-    for (idx, obj) in days.iter().enumerate() {
+    for day in days.iter() {
         println!();
-        let day = idx + 1;
 
         let timer1 = std::time::Instant::now();
-        let result1 = obj.part1();
+        let result1 = day.part1();
         let elapse1 = timer1.elapsed();
-        println!("[Day{} Part1] {:<15} ({}ms)", day, result1, elapse1.as_millis());
+        println!("[{} Part1] {:<15} ({}ms)", day.as_ref(), result1, elapse1.as_millis());
 
         let timer2 = std::time::Instant::now();
-        let result2 = obj.part2();
+        let result2 = day.part2();
         let elapse2 = timer2.elapsed();
-        println!("[Day{} Part2] {:<15} ({}ms)", day, result2, elapse2.as_millis());
+        println!("[{} Part2] {:<15} ({}ms)", day.as_ref(), result2, elapse2.as_millis());
     }
 }

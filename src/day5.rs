@@ -4,6 +4,12 @@ use advent_of_code_2024::Day;
 
 pub struct Day5;
 
+impl std::fmt::Display for Day5 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Day5")
+    }
+}
+
 impl Day for Day5 {
     fn part1(&self) -> usize {
         let input = std::fs::read_to_string("./input/day5").unwrap();

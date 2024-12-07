@@ -1,8 +1,12 @@
-use std::collections::HashMap;
-
 use advent_of_code_2024::Day;
 
 pub struct Day1;
+
+impl std::fmt::Display for Day1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Day1")
+    }
+}
 
 impl Day for Day1 {
     fn part1(&self) -> usize {
@@ -50,7 +54,7 @@ impl Day for Day1 {
                     (list1, list2)
                 });
 
-        let scores = list2.into_iter().fold(HashMap::new(), |mut acc, val| {
+        let scores = list2.into_iter().fold(std::collections::HashMap::new(), |mut acc, val| {
             if let Some(score) = acc.get_mut(&val) {
                 *score += 1;
             } else {

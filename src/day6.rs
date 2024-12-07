@@ -100,6 +100,12 @@ impl From<char> for Area {
 
 pub struct Day6;
 
+impl std::fmt::Display for Day6 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Day6")
+    }
+}
+
 impl Day for Day6 {
     fn part1(&self) -> usize {
         let input = std::fs::read_to_string("./input/day6").unwrap();
