@@ -54,14 +54,16 @@ impl Day for Day1 {
                     (list1, list2)
                 });
 
-        let scores = list2.into_iter().fold(std::collections::HashMap::new(), |mut acc, val| {
-            if let Some(score) = acc.get_mut(&val) {
-                *score += 1;
-            } else {
-                acc.insert(val, 1);
-            }
-            acc
-        });
+        let scores = list2
+            .into_iter()
+            .fold(std::collections::HashMap::new(), |mut acc, val| {
+                if let Some(score) = acc.get_mut(&val) {
+                    *score += 1;
+                } else {
+                    acc.insert(val, 1);
+                }
+                acc
+            });
 
         let result = list1.into_iter().fold(0, |acc, val| {
             let score = scores.get(&val).copied().unwrap_or(0);

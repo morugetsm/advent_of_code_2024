@@ -1,6 +1,7 @@
 use std::{collections::HashSet, mem::MaybeUninit, ops::Range};
 
 use advent_of_code_2024::Day;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 enum Direction {
@@ -76,7 +77,38 @@ impl Coord {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct Coord2 {
+    y: usize,
+    y_max: usize,
+    x: usize,
+    x_max: usize,
+}
+
+impl Coord2 {
+    fn forward(&self, dir: Direction) -> Option<Self> {
+        match dir {
+            Direction::Up => (self.y > 0).then(|| Self {
+                y: self.y - 1,
+                ..*self
+            }),
+            Direction::Down => (self.y < self.y_max).then(|| Self {
+                y: self.y + 1,
+                ..*self
+            }),
+            Direction::Left => (self.x > 0).then(|| Self {
+                x: self.x - 1,
+                ..*self
+            }),
+            Direction::Right => (self.x < self.x_max).then(|| Self {
+                x: self.x + 1,
+                ..*self
+            }),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 enum Area {
     Empty,
     Block,
@@ -158,7 +190,7 @@ impl Day for Day6 {
             }
         }
 
-        let result = map.iter().fold(0, |acc, line| {
+        map.iter().fold(0, |acc, line| {
             acc + line.iter().fold(0, |acc, cell| {
                 if matches!(cell, Area::Visited) {
                     acc + 1
@@ -166,9 +198,7 @@ impl Day for Day6 {
                     acc
                 }
             })
-        });
-
-        result
+        })
     }
 
     fn part2(&self) -> usize {
@@ -179,49 +209,42 @@ impl Day for Day6 {
             .map(|line| line.chars().map(Area::from).collect())
             .collect();
 
-        fn simulate_loop(mut map: Vec<Vec<Area>>) -> bool {
+        fn simulate_loop(map: Vec<Vec<Area>>) -> bool {
             let mut coord = MaybeUninit::uninit();
 
             for y in 0..map.len() {
                 for x in 0..map[0].len() {
                     if matches!(map[y][x], Area::Guard(_)) {
-                        coord.write(Coord {
-                            y_range: 0..map.len(),
+                        coord.write(Coord2 {
                             y,
-                            x_range: 0..map[0].len(),
+                            y_max: map.len() - 1,
                             x,
+                            x_max: map[0].len() - 1,
                         });
                     }
                 }
             }
 
             let mut curr = unsafe { coord.assume_init() };
-            let mut guard = Area::Visited;
-            std::mem::swap(&mut guard, &mut map[curr.y][curr.x]);
+            let Area::Guard(mut dir) = map[curr.y][curr.x] else {
+                panic!()
+            };
 
             let mut path = HashSet::new();
 
             'outer: loop {
-                let Area::Guard(ref mut dir) = guard else {
-                    panic!()
-                };
-
                 'inner: loop {
-                    let Some(next) = curr.forward(*dir) else {
+                    let Some(next) = curr.forward(dir) else {
                         break 'outer;
                     };
-                    if !path.insert((next.y, next.x, *dir)) {
+                    if !path.insert((next.y, next.x, dir)) {
                         return true;
                     }
-                    match map[next.y][next.x] {
-                        Area::Block => {
-                            dir.rotate();
-                        }
-                        Area::Empty | Area::Visited => {
-                            curr = next;
-                            break 'inner;
-                        }
-                        _ => unreachable!(),
+                    if map[next.y][next.x] == Area::Block {
+                        dir.rotate();
+                    } else {
+                        curr = next;
+                        break 'inner;
                     }
                 }
             }
@@ -229,7 +252,8 @@ impl Day for Day6 {
             false
         }
 
-        let mut result = 0;
+        let mut maps = Vec::new();
+
         for y in 0..map.len() {
             for x in 0..map[0].len() {
                 if !matches!(map[y][x], Area::Empty) {
@@ -238,12 +262,13 @@ impl Day for Day6 {
                 let mut map = map.clone();
                 map[y][x] = Area::Block;
 
-                if simulate_loop(map) {
-                    result += 1;
-                }
+                maps.push(map);
             }
         }
 
-        result
+        maps.into_par_iter()
+            .map(simulate_loop)
+            .filter(|is_loop| *is_loop)
+            .count()
     }
 }

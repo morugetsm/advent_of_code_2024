@@ -27,11 +27,21 @@ fn main() {
         let timer1 = std::time::Instant::now();
         let result1 = day.part1();
         let elapse1 = timer1.elapsed();
-        println!("[{} Part1] {:<15} ({}ms)", day.as_ref(), result1, elapse1.as_millis());
+        println!(
+            "[{} Part1] {:<15} ({}ms)",
+            day.as_ref(),
+            result1,
+            elapse1.as_millis()
+        );
 
         let timer2 = std::time::Instant::now();
         let result2 = day.part2();
         let elapse2 = timer2.elapsed();
-        println!("[{} Part2] {:<15} ({}ms)", day.as_ref(), result2, elapse2.as_millis());
+        println!(
+            "[{} Part2] {:<15} ({}ms)",
+            day.as_ref(),
+            result2,
+            elapse2.as_millis()
+        );
     }
 }
