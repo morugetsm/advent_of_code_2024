@@ -128,7 +128,7 @@ pub fn part1() {
         let Area::Guard(ref mut dir) = guard else {
             panic!()
         };
-        
+
         'inner: loop {
             let Some(next) = curr.forward(*dir) else {
                 break 'outer;
@@ -157,7 +157,7 @@ pub fn part1() {
         })
     });
 
-    println!("Day5 Part1 result: {}", result);
+    println!("Day6 Part1 result: {}", result);
 }
 
 pub fn part2() {
@@ -170,7 +170,7 @@ pub fn part2() {
 
     fn simulate_loop(mut map: Vec<Vec<Area>>) -> bool {
         let mut coord = MaybeUninit::uninit();
-    
+
         for y in 0..map.len() {
             for x in 0..map[0].len() {
                 if matches!(map[y][x], Area::Guard(_)) {
@@ -214,7 +214,7 @@ pub fn part2() {
                 }
             }
         }
-        
+
         false
     }
 
@@ -233,5 +233,5 @@ pub fn part2() {
         }
     }
 
-    println!("Day5 Part2 result: {}", result);
+    println!("Day6 Part2 result: {}", result);
 }
