@@ -11,19 +11,19 @@ impl Day for Day7 {
         let result: usize = input
             .lines()
             .map(|line| {
-                let mut segs = rgx
+                let mut nums = rgx
                     .captures_iter(line)
                     .map(|cpt| cpt.get(1).unwrap().as_str().parse::<usize>().unwrap());
-                (segs.next().unwrap(), segs.collect::<Vec<usize>>())
+                (nums.next().unwrap(), nums.collect::<Vec<usize>>())
             })
-            .filter_map(|(res, parts)| {
-                let mut opps = vec![parts[0]];
+            .filter_map(|(res, operands)| {
+                let mut opps = vec![operands[0]];
 
-                for part in &parts[1..] {
-                    let bufs = std::mem::take(&mut opps);
-                    for buf in bufs {
-                        opps.push(buf + part);
-                        opps.push(buf * part);
+                for operand in &operands[1..] {
+                    let mids = std::mem::take(&mut opps);
+                    for mid in mids {
+                        opps.push(mid + operand);
+                        opps.push(mid * operand);
                     }
                 }
 
@@ -42,20 +42,20 @@ impl Day for Day7 {
         let result: usize = input
             .lines()
             .map(|line| {
-                let mut segs = rgx
+                let mut nums = rgx
                     .captures_iter(line)
                     .map(|cpt| cpt.get(1).unwrap().as_str().parse::<usize>().unwrap());
-                (segs.next().unwrap(), segs.collect::<Vec<usize>>())
+                (nums.next().unwrap(), nums.collect::<Vec<usize>>())
             })
-            .filter_map(|(res, parts)| {
-                let mut opps = vec![parts[0]];
+            .filter_map(|(res, operands)| {
+                let mut opps = vec![operands[0]];
 
-                for part in &parts[1..] {
-                    let bufs = std::mem::take(&mut opps);
-                    for buf in bufs {
-                        opps.push(buf + part);
-                        opps.push(buf * part);
-                        opps.push(format!("{buf}{part}").parse().unwrap());
+                for operand in &operands[1..] {
+                    let mids = std::mem::take(&mut opps);
+                    for mid in mids {
+                        opps.push(mid + operand);
+                        opps.push(mid * operand);
+                        opps.push(mid * 10usize.pow(operand.ilog10() + 1) + operand);
                     }
                 }
 
