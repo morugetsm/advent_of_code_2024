@@ -29,12 +29,10 @@ impl Day for Day1 {
         list1.sort();
         list2.sort();
 
-        let result = list1
+        list1
             .into_iter()
             .zip(list2)
-            .fold(0, |acc, (val1, val2)| acc + val1.abs_diff(val2));
-
-        result
+            .fold(0, |acc, (val1, val2)| acc + val1.abs_diff(val2))
     }
 
     fn part2(&self) -> usize {
