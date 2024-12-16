@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use advent_of_code_2024::Day;
 
@@ -268,7 +268,6 @@ impl Day for Day8 {
             }
         }
 
-        println!("{:?}", antinodes);
         antinodes.len()
     }
 }
