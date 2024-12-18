@@ -90,7 +90,7 @@ impl Day for Day9 {
                 i -= 1;
                 continue;
             }
-            
+
             let mut len = 0;
             for _ in 0.. {
                 if back - len == 0 {
@@ -113,7 +113,7 @@ impl Day for Day9 {
                     }
                 }
                 for j in 0..len {
-                    disk.swap(back - j , front + j);
+                    disk.swap(back - j, front + j);
                 }
                 break 'inner;
             }
