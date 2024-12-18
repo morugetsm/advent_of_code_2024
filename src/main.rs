@@ -1,7 +1,6 @@
 use advent_of_code_2024::Day;
 
 mod day1;
-mod day10;
 mod day2;
 mod day3;
 mod day4;
@@ -10,6 +9,8 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
+mod day10;
+mod day11;
 
 fn main() {
     let days: &[Box<dyn Day>] = &[
@@ -23,6 +24,7 @@ fn main() {
         Box::new(day8::Day8),
         Box::new(day9::Day9),
         Box::new(day10::Day10),
+        Box::new(day11::Day11),
     ];
 
     println!("ADVENT OF CODE 2024!");
